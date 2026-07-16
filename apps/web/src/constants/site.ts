@@ -12,7 +12,7 @@ export const SITE = {
 
   github: "https://github.com/vjtogather",
 
-  youtube: "https://youtube.com/@vjtronix",
+  youtube: "https://www.youtube.com/@Vjtronix",
 
   linkedin: "",
 

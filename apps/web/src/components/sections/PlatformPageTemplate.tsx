@@ -1,12 +1,26 @@
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
-import type { PlatformPage } from "@/data/platform-pages";
+import type { PlatformPage, PlatformPageAction } from "@/data/platform-pages";
 
 interface PlatformPageTemplateProps {
   page: PlatformPage;
 }
 
+function getExternalLinkProps(action: PlatformPageAction) {
+  if (!action.isExternal) {
+    return {};
+  }
+
+  return {
+    rel: "noopener noreferrer",
+    target: "_blank",
+  };
+}
+
 export function PlatformPageTemplate({ page }: PlatformPageTemplateProps) {
+  const primaryLinkProps = getExternalLinkProps(page.primaryAction);
+  const secondaryLinkProps = getExternalLinkProps(page.secondaryAction);
+
   return (
     <section className="min-h-[calc(100vh-4rem)] bg-slate-950 py-20 sm:py-24">
       <Container>
@@ -22,10 +36,14 @@ export function PlatformPageTemplate({ page }: PlatformPageTemplateProps) {
               {page.description}
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Button href={page.primaryAction.href}>
+              <Button href={page.primaryAction.href} {...primaryLinkProps}>
                 {page.primaryAction.label}
               </Button>
-              <Button href={page.secondaryAction.href} variant="secondary">
+              <Button
+                href={page.secondaryAction.href}
+                variant="secondary"
+                {...secondaryLinkProps}
+              >
                 {page.secondaryAction.label}
               </Button>
             </div>

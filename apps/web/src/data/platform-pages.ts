@@ -1,3 +1,5 @@
+import { SITE } from "@/constants/site";
+
 export type PlatformPageSlug =
   | "blog"
   | "projects"
@@ -6,19 +8,19 @@ export type PlatformPageSlug =
   | "portfolio"
   | "videos";
 
+export interface PlatformPageAction {
+  label: string;
+  href: string;
+  isExternal?: boolean;
+}
+
 export interface PlatformPage {
   slug: PlatformPageSlug;
   title: string;
   eyebrow: string;
   description: string;
-  primaryAction: {
-    label: string;
-    href: string;
-  };
-  secondaryAction: {
-    label: string;
-    href: string;
-  };
+  primaryAction: PlatformPageAction;
+  secondaryAction: PlatformPageAction;
   highlights: string[];
   roadmap: string[];
 }
@@ -156,8 +158,9 @@ export const PLATFORM_PAGES: Record<PlatformPageSlug, PlatformPage> = {
     description:
       "A video library for tutorials, demos, project walkthroughs, embedded systems lessons, and product engineering content.",
     primaryAction: {
-      label: "Watch Videos",
-      href: "/videos",
+      label: "Open YouTube Channel",
+      href: SITE.youtube,
+      isExternal: true,
     },
     secondaryAction: {
       label: "Read Blog",
