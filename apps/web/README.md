@@ -34,8 +34,10 @@ pnpm start
 src/app              App Router pages, layout, and global styles
 src/components/ui    Reusable UI primitives
 src/components/layout Shared shell components
+src/components/sections Shared page sections and templates
 src/components/home  Landing page sections
 src/constants        Brand and navigation constants
+src/data             Static typed data contracts before CMS integration
 src/lib              Shared utilities
 src/types            Shared TypeScript types
 ```

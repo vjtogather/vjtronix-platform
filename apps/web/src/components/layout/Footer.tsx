@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { NAVIGATION } from "@/constants/navigation";
 import { SITE } from "@/constants/site";
 import { Container } from "@/components/ui/Container";
@@ -19,12 +21,12 @@ export function Footer() {
             <ul className="mt-4 space-y-3">
               {NAVIGATION.map((item) => (
                 <li key={item.href}>
-                  <a
+                  <Link
                     className="text-sm text-slate-400 transition hover:text-white"
                     href={item.href}
                   >
                     {item.title}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
