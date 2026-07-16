@@ -1,36 +1,47 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# VJtronix Web
 
-## Getting Started
+Public-facing web application for VJtronix, built with Next.js 15, React 19, TypeScript, and Tailwind CSS v4.
 
-First, run the development server:
+## Current Scope
+
+- Dark-first landing page
+- SEO metadata foundation
+- Reusable UI primitives
+- Shared layout components
+- Homepage sections for vision, features, technology stack, and calls to action
+
+## Development
+
+Install dependencies from this app directory, then run the development server:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
 pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+pnpm lint
+pnpm build
+pnpm start
+```
 
-## Learn More
+## Structure
 
-To learn more about Next.js, take a look at the following resources:
+```text
+src/app              App Router pages, layout, and global styles
+src/components/ui    Reusable UI primitives
+src/components/layout Shared shell components
+src/components/home  Landing page sections
+src/constants        Brand and navigation constants
+src/lib              Shared utilities
+src/types            Shared TypeScript types
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Architecture Notes
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The current landing page is static and server-rendered. Client Components should be introduced only when a feature needs browser state, effects, or event-driven interactivity.
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+See `docs/architecture/WEB_FOUNDATION.md` for the first architecture decision record.
