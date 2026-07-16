@@ -1,3 +1,5 @@
+import { SITE } from "@/constants/site";
+
 export const NAVIGATION = [
   {
     title: "Home",
@@ -25,6 +27,7 @@ export const NAVIGATION = [
   },
   {
     title: "Videos",
-    href: "/videos",
+    href: SITE.youtube,
+    isExternal: true,
   },
 ];

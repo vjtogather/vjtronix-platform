@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 import { NAVIGATION } from "@/constants/navigation";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
@@ -12,13 +10,15 @@ export function Navbar() {
         <Logo />
         <nav aria-label="Main navigation" className="hidden items-center gap-1 lg:flex">
           {NAVIGATION.map((item) => (
-            <Link
+            <a
               className="rounded-lg px-3 py-2 text-sm font-medium text-slate-300 transition hover:bg-white/[0.06] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-300"
               href={item.href}
+              rel={item.isExternal ? "noopener noreferrer" : undefined}
+              target={item.isExternal ? "_blank" : undefined}
               key={item.href}
             >
               {item.title}
-            </Link>
+            </a>
           ))}
         </nav>
         <div className="hidden sm:block">
