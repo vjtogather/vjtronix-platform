@@ -1,0 +1,135 @@
+import { PrismaAdapter } from "@auth/prisma-adapter";
+import NextAuth from "next-auth";
+import GitHub from "next-auth/providers/github";
+import Google from "next-auth/providers/google";
+//import Nodemailer from "next-auth/providers/nodemailer";
+
+import { prisma } from "@/lib/prisma";
+import { RoleName } from "@/generated/prisma/client";
+
+function getRequiredEnvironmentValue(name: string) {
+  const value = process.env[name];
+
+  if (!value) {
+    throw new Error(`${name} must be set.`);
+  }
+
+  return value;
+}
+
+export const { handlers, auth, signIn, signOut } = NextAuth({
+  adapter: PrismaAdapter(prisma),
+  session: {
+    strategy: "database",
+  },
+  pages: {
+    signIn: "/sign-in",
+    verifyRequest: "/verify-request",
+  },
+  providers: [
+    Google({
+      allowDangerousEmailAccountLinking: false,
+    }),
+    GitHub({
+      allowDangerousEmailAccountLinking: false,
+    }),
+    // Nodemailer({
+    //   from: getRequiredEnvironmentValue("AUTH_EMAIL_FROM"),
+    //   server: {
+    //     host: getRequiredEnvironmentValue("AUTH_EMAIL_SERVER_HOST"),
+    //     port: Number(process.env.AUTH_EMAIL_SERVER_PORT ?? 587),
+    //     auth: {
+    //       user: getRequiredEnvironmentValue("AUTH_EMAIL_SERVER_USER"),
+    //       pass: getRequiredEnvironmentValue("AUTH_EMAIL_SERVER_PASSWORD"),
+    //     },
+    //   },
+    // }),
+  ],
+  callbacks: {
+    async signIn({ user }) {
+      if (!user.email) {
+        return false;
+      }
+
+      const existingUser = await prisma.user.findUnique({
+        where: { email: user.email },
+        select: { isActive: true },
+      });
+
+      return existingUser?.isActive ?? true;
+    },
+    async session({ session, user }) {
+      const userRoles = await prisma.userRole.findMany({
+        where: { userId: user.id },
+        select: { role: { select: { name: true } } },
+      });
+
+      session.user.id = user.id;
+      session.user.roles = userRoles.map(({ role }) => role.name) as RoleName[];
+
+      return session;
+    },
+  },
+  events: {
+    async createUser({ user }) {
+      if (!user.id) {
+        throw new Error("Auth.js created a user without an ID.");
+      }
+
+      const customerRole = await prisma.role.upsert({
+        where: { name: RoleName.CUSTOMER },
+        create: {
+          name: RoleName.CUSTOMER,
+          description: "Purchased-product access.",
+        },
+        update: {},
+      });
+
+      await prisma.$transaction([
+        prisma.userRole.upsert({
+          where: {
+            userId_roleId: {
+              userId: user.id,
+              roleId: customerRole.id,
+            },
+          },
+          create: {
+            userId: user.id,
+            roleId: customerRole.id,
+          },
+          update: {},
+        }),
+        prisma.auditLog.create({
+          data: {
+            actorId: user.id,
+            event: "AUTH_USER_CREATED",
+          },
+        }),
+      ]);
+    },
+    async signIn({ user, account }) {
+      await prisma.auditLog.create({
+        data: {
+          actorId: user.id,
+          event: "AUTH_SIGN_IN",
+          metadata: account ? { provider: account.provider } : undefined,
+        },
+      });
+    },
+    async signOut(message) {
+      const actorId =
+        "session" in message ? message.session?.userId : message.token?.sub;
+
+      if (!actorId) {
+        return;
+      }
+
+      await prisma.auditLog.create({
+        data: {
+          actorId,
+          event: "AUTH_SIGN_OUT",
+        },
+      });
+    },
+  },
+});

@@ -1,5 +1,5 @@
 import { NAVIGATION } from "@/constants/navigation";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/Container";
 import { Logo } from "@/components/ui/Logo";
 
