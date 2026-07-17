@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/Container";
 import type { PlatformPage, PlatformPageAction } from "@/data/platform-pages";
@@ -36,16 +38,14 @@ export function PlatformPageTemplate({ page }: PlatformPageTemplateProps) {
               {page.description}
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Button href={page.primaryAction.href} {...primaryLinkProps}>
-                {page.primaryAction.label}
-              </Button>
-              <Button
-                href={page.secondaryAction.href}
-                variant="secondary"
-                {...secondaryLinkProps}
-              >
-                {page.secondaryAction.label}
-              </Button>
+              <Link href={page.primaryAction.href} {...primaryLinkProps}>
+                <Button>{page.primaryAction.label}</Button>
+              </Link>
+              <Link href={page.secondaryAction.href} {...secondaryLinkProps}>
+                <Button variant="secondary">
+                  {page.secondaryAction.label}
+                </Button>
+              </Link>
             </div>
           </div>
 

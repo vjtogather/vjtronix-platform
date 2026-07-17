@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { NAVIGATION } from "@/constants/navigation";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/Container";
@@ -22,9 +24,9 @@ export function Navbar() {
           ))}
         </nav>
         <div className="hidden sm:block">
-          <Button href="/courses" variant="secondary">
-            Start Learning
-          </Button>
+          <Link href="/courses">
+            <Button variant="secondary">Start Learning</Button>
+          </Link>
         </div>
       </Container>
     </header>

@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/Container";
 import { SITE } from "@/constants/site";
@@ -27,10 +29,12 @@ export function Hero() {
             stack systems.
           </p>
           <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-            <Button href="/courses">Explore Courses</Button>
-            <Button href="/projects" variant="secondary">
-              View Projects
-            </Button>
+            <Link href="/courses">
+              <Button>Explore Courses</Button>
+            </Link>
+            <Link href="/projects">
+              <Button variant="secondary">View Projects</Button>
+            </Link>
           </div>
           <dl className="mt-12 grid max-w-xl grid-cols-3 gap-4">
             {metrics.map((metric) => (

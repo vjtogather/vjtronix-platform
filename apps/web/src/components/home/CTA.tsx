@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/Container";
 
@@ -17,10 +19,12 @@ export function CTA() {
             </p>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row lg:justify-end">
-            <Button href="/blog" variant="secondary">
-              Read Blog
-            </Button>
-            <Button href="/portfolio">View Portfolio</Button>
+            <Link href="/blog">
+              <Button variant="secondary">Read Blog</Button>
+            </Link>
+            <Link href="/portfolio">
+              <Button>View Portfolio</Button>
+            </Link>
           </div>
         </div>
       </Container>
