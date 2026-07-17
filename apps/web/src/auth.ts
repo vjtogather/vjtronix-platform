@@ -1,21 +1,14 @@
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import NextAuth from "next-auth";
+import Credentials from "next-auth/providers/credentials";
 import GitHub from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
 //import Nodemailer from "next-auth/providers/nodemailer";
 
 import { prisma } from "@/lib/prisma";
+import { verifyPassword } from "@/lib/password";
+import { signInSchema } from "@/lib/validations/auth";
 import { RoleName } from "@/generated/prisma/client";
-
-function getRequiredEnvironmentValue(name: string) {
-  const value = process.env[name];
-
-  if (!value) {
-    throw new Error(`${name} must be set.`);
-  }
-
-  return value;
-}
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
@@ -27,6 +20,51 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     verifyRequest: "/verify-request",
   },
   providers: [
+    Credentials({
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        const parsedCredentials = signInSchema.safeParse(credentials);
+
+        if (!parsedCredentials.success) {
+          return null;
+        }
+
+        const user = await prisma.user.findUnique({
+          where: { email: parsedCredentials.data.email },
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            image: true,
+            password: true,
+            isActive: true,
+          },
+        });
+
+        if (!user?.password || !user.isActive) {
+          return null;
+        }
+
+        const passwordsMatch = await verifyPassword(
+          parsedCredentials.data.password,
+          user.password,
+        );
+
+        if (!passwordsMatch) {
+          return null;
+        }
+
+        return {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          image: user.image,
+        };
+      },
+    }),
     Google({
       allowDangerousEmailAccountLinking: false,
     }),

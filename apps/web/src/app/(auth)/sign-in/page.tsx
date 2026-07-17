@@ -14,6 +14,7 @@ export const metadata: Metadata = {
 const errorMessages: Record<string, string> = {
   AccessDenied: "This account is not permitted to sign in.",
   Configuration: "Sign-in is temporarily unavailable. Please try again later.",
+  CredentialsSignin: "Email or password is incorrect.",
   EmailSignin: "Enter a valid email address to continue.",
   OAuthAccountNotLinked:
     "This email is already associated with a different sign-in method.",
@@ -44,7 +45,7 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
           Sign in to VJtronix
         </h1>
         <p className="mt-3 text-sm leading-6 text-slate-400">
-          Continue with a trusted provider or receive a secure sign-in link by email.
+          Continue with a trusted provider or sign in with your email and password.
         </p>
 
         {errorMessage ? (
@@ -99,13 +100,32 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
               type="email"
             />
           </div>
+          <div className="grid gap-2">
+            <label className="text-sm font-medium text-slate-200" htmlFor="password">
+              Password
+            </label>
+            <input
+              autoComplete="current-password"
+              className="rounded-md border border-white/15 bg-slate-950 px-3 py-2.5 text-sm text-white placeholder:text-slate-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-300"
+              id="password"
+              name="password"
+              required
+              type="password"
+            />
+          </div>
           <button
             className="rounded-md bg-sky-300 px-4 py-2.5 text-sm font-semibold text-slate-950 transition hover:bg-sky-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-300"
             type="submit"
           >
-            Email me a sign-in link
+            Sign in with email
           </button>
         </form>
+        <p className="mt-6 text-center text-sm text-slate-400">
+          New to VJtronix?{" "}
+          <Link className="font-medium text-sky-200 hover:text-sky-100" href="/sign-up">
+            Create an account
+          </Link>
+        </p>
       </section>
     </main>
   );

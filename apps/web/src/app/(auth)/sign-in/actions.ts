@@ -2,11 +2,9 @@
 
 import { AuthError } from "next-auth";
 import { redirect } from "next/navigation";
-import { z } from "zod";
 
 import { signIn } from "@/auth";
-
-const emailSchema = z.string().trim().email();
+import { signInSchema } from "@/lib/validations/auth";
 
 function handleSignInError(error: unknown): never {
   if (error instanceof AuthError) {
@@ -25,15 +23,18 @@ export async function signInWithProvider(provider: "google" | "github") {
 }
 
 export async function signInWithEmail(formData: FormData) {
-  const parsedEmail = emailSchema.safeParse(formData.get("email"));
+  const parsedCredentials = signInSchema.safeParse({
+    email: formData.get("email"),
+    password: formData.get("password"),
+  });
 
-  if (!parsedEmail.success) {
-    redirect("/sign-in?error=EmailSignin");
+  if (!parsedCredentials.success) {
+    redirect("/sign-in?error=CredentialsSignin");
   }
 
   try {
-    await signIn("nodemailer", {
-      email: parsedEmail.data,
+    await signIn("credentials", {
+      ...parsedCredentials.data,
       redirectTo: "/account",
     });
   } catch (error) {

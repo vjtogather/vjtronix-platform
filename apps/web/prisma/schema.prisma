@@ -16,19 +16,78 @@ enum RoleName {
   CUSTOMER
 }
 
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+}
+
 model User {
-  id            String     @id @default(cuid())
-  name          String?
-  email         String?    @unique
-  emailVerified DateTime?
-  image         String?
-  isActive      Boolean    @default(true)
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
-  accounts      Account[]
-  sessions      Session[]
-  roles         UserRole[]
-  auditLogs     AuditLog[] @relation("AuditActor")
+  id              String     @id @default(cuid())
+  name            String?
+  email           String?    @unique
+
+  password        String?
+  phone           String?    @unique
+  phoneVerified   DateTime?
+
+  emailVerified   DateTime?
+  image           String?
+  isActive        Boolean    @default(true)
+
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  accounts        Account[]
+  sessions        Session[]
+  roles           UserRole[]
+  auditLogs       AuditLog[] @relation("AuditActor")
+  posts           Post[]     @relation("PostAuthor")
+}
+
+model Post {
+  id             String     @id @default(cuid())
+  title          String
+  slug           String     @unique
+  excerpt        String?    @db.Text
+  content        String     @db.Text
+  coverImage     String?    @db.Text
+  status         PostStatus @default(DRAFT)
+  seoTitle       String?
+  seoDescription String?    @db.Text
+  readingTime    Int        @default(1)
+  publishedAt    DateTime?
+  authorId       String
+  author         User       @relation("PostAuthor", fields: [authorId], references: [id], onDelete: Restrict)
+  categories     Category[]
+  tags           Tag[]
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  @@index([status, publishedAt])
+  @@index([authorId, createdAt])
+}
+
+model Category {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String?  @db.Text
+  posts       Post[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([name])
+}
+
+model Tag {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  posts     Post[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([name])
 }
 
 model Account {
